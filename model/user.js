@@ -8,9 +8,22 @@ const joiPassword = Joi.extend(joiPasswordExtendCore);
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
+  username: {
+    type : String ,
+    required : [true, "Username is required"] ,
+    min: 8,
+    max: 25,
+    unique : true
+  },
   email: {
     type: String,
-    required: true
+    default: "" ,
+    unique : true
+  },
+  mobile: {
+    type: String,
+    default: "" ,
+    unique : true 
   },
   password: {
     type: String,
@@ -27,34 +40,34 @@ const User = mongoose.model('User', userSchema);
 
 
 //funtion for validation
-function validateUser(user) {
+// function validateUser(user) {
 
 
-  const JoiSchema = Joi.object({
+//   const JoiSchema = Joi.object({
 
-    email: Joi.string()
-      .email()
-      .min(5)
-      .max(50)
-      .optional(),
+//     username: Joi.string()
+//       // .email()
+//       .min(5)
+//       .max(50)
+//       .optional(),
 
-    // password: Joi.string().regex('/^[a-zA-Z][0-9]$/')
-    password: joiPassword.string()
-      .min(8)
-      .max(50)
-      .minOfLowercase(1)
-      .minOfUppercase(1)
-      .minOfSpecialCharacters(1)
-      .minOfNumeric(1)
-      .required()
+//     // password: Joi.string().regex('/^[a-zA-Z][0-9]$/')
+//     password: joiPassword.string()
+//       .min(8)
+//       .max(50)
+//       .minOfLowercase(1)
+//       .minOfUppercase(1)
+//       .minOfSpecialCharacters(1)
+//       .minOfNumeric(1)
+//       .required()
       
     
-  }).options({ abortEarly: false });
+//   }).options({ abortEarly: false });
 
-  return JoiSchema.validate(user)
+//   return JoiSchema.validate(user)
 
 
-}
+// }
 
 
 // module.exports.User = User;

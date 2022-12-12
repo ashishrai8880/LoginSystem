@@ -8,11 +8,24 @@ function validateUser(user) {
 
 
     const JoiSchema = Joi.object({
+
+      username: Joi.string()
+        // .email()
+        .min(8)
+        .max(25)
+        .optional(),
   
       email: Joi.string()
         .email()
-        .min(5)
-        .max(50)
+        .min(8)
+        .max(25)
+        .optional(),
+
+
+      mobile: Joi.string()
+        
+        .min(10)
+        .max(10)
         .optional(),
   
       // password: Joi.string().regex('/^[a-zA-Z][0-9]$/')
