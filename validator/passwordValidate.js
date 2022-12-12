@@ -20,7 +20,7 @@ function validateUser(user) {
         .min(8)
         .max(25)
         .optional(),
-
+        
 
       mobile: Joi.string()
         

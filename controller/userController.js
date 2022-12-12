@@ -12,22 +12,25 @@ const register = async (req , res)=>{
 
         const { error } = validate(req.body);
         if (error) return res.status(400).send(error.details[0].message);
-        // console.log(error);        
-        var salt = bcrypt.genSaltSync(10);
-        var email = ""
-        var mobile = ""
 
-        if( validator.isEmail(req.body.username)){
-            email = req.body.username 
-            mobile = ""
+        let username = "" ;
+
+        if(req.body.email){
+            username = req.body.email ;
         }else{
-            email = ""
-            mobile = req.body.username
+            username = req.body.mobile ;
         }
 
+        const user = await User.findOne({username : username}) ;
+
+        if(user){
+            return res.status(400).send("User already exists ") ;
+        }
+
+        var salt = bcrypt.genSaltSync(10);
         var hashPassword = bcrypt.hashSync(req.body.password, salt);      
 
-        const newUser = new User({username : req.body.username ,email :email , mobile: mobile ,  password : hashPassword}) ;
+        const newUser = new User({username : username ,email :req.body.email , mobile: req.body.mobile ,  password : hashPassword}) ;
         
         const saved = await newUser.save();
         
@@ -35,7 +38,7 @@ const register = async (req , res)=>{
         // res.status(200).json(newUser);
         
     } catch (error) {
-        res.status(400).send("Some internal error has occured . Your Data cannot saved ");
+        res.status(400).send("Some internal error has occured . Your Data cannot saved "+ error);
     }
 
 }
@@ -45,7 +48,6 @@ const register = async (req , res)=>{
 const login = async (req , res)=>{
 
     try {
-
 
         const user = await User.findOne({username : req.body.username}) ;
 
