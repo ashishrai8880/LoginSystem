@@ -10,8 +10,9 @@ const register = async (req , res)=>{
 
     try {
 
+        // This is checking alphanumeric password
         const { error } = validate(req.body);
-        if (error) return res.status(400).send(error.details[0].message);
+        if (error) return res.status(400).json({ success:false , message : error.details[0].message});
 
         let username = "" ;
 
@@ -23,10 +24,12 @@ const register = async (req , res)=>{
 
         const user = await User.findOne({username : username}) ;
 
+        // if user already exist 
         if(user){
-            return res.status(400).send("User already exists ") ;
+            return res.status(400).json({success:false , message : "User already exists "}) ;
         }
 
+        //encrypting password 
         var salt = bcrypt.genSaltSync(10);
         var hashPassword = bcrypt.hashSync(req.body.password, salt);      
 
@@ -34,11 +37,11 @@ const register = async (req , res)=>{
         
         const saved = await newUser.save();
         
-        res.status(200).json(saved);
+        res.status(200).json({success : true , message : saved});
         // res.status(200).json(newUser);
         
     } catch (error) {
-        res.status(400).send("Some internal error has occured . Your Data cannot saved "+ error);
+        res.status(400).json({success:false , message : "Some internal error has occured . Your Data cannot saved "+ error});
     }
 
 }
@@ -49,14 +52,17 @@ const login = async (req , res)=>{
 
     try {
 
+        //Finding User 
         const user = await User.findOne({username : req.body.username}) ;
 
+        //If User does not exist 
         if (!user) {
             return res.status(400).send({success:false , message : "Please Login with correct credentials"});
         }
         
         const passwordCompare = await bcrypt.compare(req.body.password , user.password);
 
+        //If password is not matched 
         if(!passwordCompare){
             return res.status(400).send({success:false , message :  "Please Login with correct credentials"});
         }
