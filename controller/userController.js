@@ -33,11 +33,9 @@ const register = async (req , res)=>{
         var salt = bcrypt.genSaltSync(10);
         var hashPassword = bcrypt.hashSync(req.body.password, salt);      
 
-        const newUser = new User({username : username ,email :req.body.email , mobile: req.body.mobile ,  password : hashPassword}) ;
+        const newUser = await new User({username : username ,email :req.body.email , mobile: req.body.mobile ,  password : hashPassword}).save() ;
         
-        const saved = await newUser.save();
-        
-        res.status(200).json({success : true , message : saved});
+        res.status(200).json({success : true , message : {username : username ,email :req.body.email , mobile: req.body.mobile}});
         // res.status(200).json(newUser);
         
     } catch (error) {
@@ -69,8 +67,11 @@ const login = async (req , res)=>{
 
         // console.log(passwordCompare);
         var token = jwt.sign( {id : user.id} , process.env.privateKey , { expiresIn : '10s' } );
-
-        res.status(200).json({success : true , token : token , user}) ;
+        
+        //add token into database 
+        const update = await User.findByIdAndUpdate({_id : user.id}, { token: token }).select('-password');
+        
+        res.status(200).json({success : true , token : token , update}) ;
         
     } catch (error) {
         res.status(400).send({success:false , error :"Some error has been occurred"});

@@ -32,6 +32,11 @@ const userSchema = new Schema({
     max: 25,
 
   },
+  token: {
+    type: String,
+    default : ""
+
+  },
 
 });
 

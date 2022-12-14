@@ -36,7 +36,10 @@ function validateUser(user) {
         .minOfUppercase(1)
         .minOfSpecialCharacters(1)
         .minOfNumeric(1)
-        .required()
+        .required() ,
+
+      token : Joi.string()
+        .optional(),
         
       
     }).options({ abortEarly: false });
